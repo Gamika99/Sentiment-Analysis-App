@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+venv/
+env/
+.env
+.venv
+*.pkl
+*.joblib
+.DS_Store
+.vscode/
+.idea/
