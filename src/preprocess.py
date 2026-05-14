@@ -105,7 +105,7 @@ def create_tfidf_vectorizer(max_features=5000):
         max_df=0.95           # Ignore terms that appear in >95% of docs
     )
 
-def load_and_preprocess_data(filepath='../data/cleaned_reviews.csv', 
+def load_and_preprocess_data(filepath='data/cleaned_reviews.csv', 
                              test_size=0.2,
                              random_state=42):
     """
@@ -165,11 +165,11 @@ def load_and_preprocess_data(filepath='../data/cleaned_reviews.csv',
     
     # Save preprocessor and vectorizer
     print("\n5. Saving preprocessor and vectorizer...")
-    joblib.dump(preprocessor, '../models/preprocessor.joblib')
-    joblib.dump(vectorizer, '../models/tfidf_vectorizer.joblib')
+    joblib.dump(preprocessor, 'models/preprocessor.joblib')
+    joblib.dump(vectorizer, 'models/tfidf_vectorizer.joblib')
     
     print("\n✅ Preprocessing complete!")
-    print(f"   Files saved to /models/")
+    print(f"   Files saved to models")
     
     return X_train, X_test, y_train, y_test, vectorizer
 
@@ -182,10 +182,10 @@ if __name__ == "__main__":
     
     # Save processed data for later use
     import scipy.sparse
-    scipy.sparse.save_npz('../models/X_train.npz', X_train)
-    scipy.sparse.save_npz('../models/X_test.npz', X_test)
-    joblib.dump(y_train, '../models/y_train.joblib')
-    joblib.dump(y_test, '../models/y_test.joblib')
+    scipy.sparse.save_npz('models/X_train.npz', X_train)
+    scipy.sparse.save_npz('models/X_test.npz', X_test)
+    joblib.dump(y_train, 'models/y_train.joblib')
+    joblib.dump(y_test, 'models/y_test.joblib')
     
     print("\n📊 Data Summary:")
     print(f"   Training positives: {sum(y_train)}")
