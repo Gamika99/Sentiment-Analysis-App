@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SentimentAI - Movie Review Sentiment Analyzer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #666;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #667eea;
+        }
+        
+        .github-btn {
+            background: #24292e;
+            color: white !important;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        
+        .github-btn:hover {
+            background: #1a1e22;
+            transform: translateY(-2px);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        /* Features Grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .feature {
+            background: white;
+            padding: 1.2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature h3 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .feature p {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        /* Form */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-family: 'Inter', monospace;
+            font-size: 1rem;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .example-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .example-btn {
+            background: #f0f0f0;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .example-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Result Section */
+        .result {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        
+        .result.sentiment-positive {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+        }
+        
+        .result.sentiment-negative {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .result h2 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .confidence {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+        
+        .prob-bar {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 30px;
+            margin: 0.5rem 0;
+            overflow: hidden;
+        }
+        
+        .prob-fill-positive {
+            background: #4caf50;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.85rem;
+            transition: width 0.3s;
+        }
+        
+        .prob-fill-negative {
+            background: #f44336;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.85rem;
+            transition: width 0.3s;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            font-size: 0.85rem;
+        }
+        
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 2rem;
+            font-size: 0.85rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">🎬 SentimentAI</div>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="https://github.com/Gamika99/Sentiment-Analysis-App/" target="_blank" class="github-btn">GitHub →</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="hero">
+            <h1>🎭 Movie Review Sentiment Analyzer</h1>
+            <p>Paste any movie review below - our AI will predict if it's positive or negative</p>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🤖</div>
+                <h3>ML Powered</h3>
+                <p>92% accuracy on IMDB reviews</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h3>Instant Results</h3>
+                <p>Prediction in under 200ms</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📊</div>
+                <h3>Logistic Regression</h3>
+                <p>Trained on 50k reviews</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">💯</div>
+                <h3>Confidence Score</h3>
+                <p>With probability distribution</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="form-group">
+                <label>🎬 Your Movie Review</label>
+                <textarea id="reviewInput" rows="5" placeholder="e.g., This film was absolutely stunning! The performances were incredible and the storyline kept me engaged throughout. I highly recommend watching this masterpiece!"></textarea>
+                <div class="example-buttons">
+                    <button type="button" class="example-btn" onclick="setExample('positive')">📝 Positive Example</button>
+                    <button type="button" class="example-btn" onclick="setExample('negative')">💔 Negative Example</button>
+                    <button type="button" class="example-btn" onclick="setExample('neutral')">😐 Mixed Review</button>
+                </div>
+            </div>
+            
+            <button id="predictBtn" onclick="predictSentiment()">
+                🔮 Analyze Sentiment
+            </button>
+            
+            <div id="resultContainer" style="display: none;"></div>
+        </div>
+        
+        <div class="card" id="about">
+            <h3>ℹ️ About This Project</h3>
+            <p style="margin-top: 1rem; line-height: 1.6;">
+                This sentiment analyzer uses a <strong>Logistic Regression</strong> model trained on 50,000 IMDB movie reviews.
+                The text is preprocessed with stemming, stopword removal, and converted to numerical features using <strong>TF-IDF vectorization</strong>.
+                The model achieves ~92% accuracy on held-out test data.
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;">
+                🔬 Model: Logistic Regression + TF-IDF (5000 features)<br>
+                📊 Dataset: IMDB 50k (balanced: 25k positive, 25k negative)<br>
+                🚀 Response time: &lt;200ms per prediction
+            </p>
+        </div>
+    </div>
+    
+    <div class="footer">
+        Made with ❤️ using Python, Flask, Scikit-learn • Sentiment Analysis Web App
+    </div>
+    
+    <script>
+        // Example reviews
+        const examples = {
+            positive: "This movie was absolutely incredible! The acting was superb, the plot was engaging, and the cinematography was breathtaking. I haven't enjoyed a film this much in years. Definitely one of the best movies I've ever seen!",
+            negative: "What a complete waste of time! The acting was terrible, the plot made no sense, and the special effects looked like they were from the 90s. I regret every minute I spent watching this garbage. Save your money and skip this one.",
+            neutral: "The movie was okay. Some parts were good, others not so much. The acting was decent but the pacing was slow. It's not the best film I've seen but also not the worst. Probably worth watching if you have nothing else to do."
+        };
+        
+        function setExample(type) {
+            document.getElementById('reviewInput').value = examples[type];
+            document.getElementById('reviewInput').focus();
+        }
+        
+        async function predictSentiment() {
+            const reviewText = document.getElementById('reviewInput').value.trim();
+            const predictBtn = document.getElementById('predictBtn');
+            const resultContainer = document.getElementById('resultContainer');
+            
+            // Validate input
+            if (!reviewText || reviewText.length < 3) {
+                alert('Please enter a valid review (minimum 3 characters)');
+                return;
+            }
+            
+            // Show loading state
+            predictBtn.disabled = true;
+            predictBtn.innerHTML = '<span class="spinner"></span> Analyzing...';
+            resultContainer.style.display = 'block';
+            resultContainer.innerHTML = '<div style="text-align: center;"><div class="spinner"></div> Processing your review...</div>';
+            
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ review: reviewText })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    displayResult(data);
+                } else {
+                    resultContainer.innerHTML = `<div style="background: #ffebee; padding: 1rem; border-radius: 10px; color: #c62828;">
+                        ❌ Error: ${data.error}
+                    </div>`;
+                }
+            } catch (error) {
+                resultContainer.innerHTML = `<div style="background: #ffebee; padding: 1rem; border-radius: 10px; color: #c62828;">
+                    ❌ Network error: ${error.message}
+                </div>`;
+            } finally {
+                predictBtn.disabled = false;
+                predictBtn.innerHTML = '🔮 Analyze Sentiment';
+            }
+        }
+        
+        function displayResult(data) {
+            const resultContainer = document.getElementById('resultContainer');
+            const sentimentClass = data.sentiment === 'Positive' ? 'sentiment-positive' : 'sentiment-negative';
+            const sentimentIcon = data.sentiment === 'Positive' ? '😊' : '😞';
+            
+            resultContainer.innerHTML = `
+                <div class="result ${sentimentClass}">
+                    <h2>${sentimentIcon} Sentiment: ${data.sentiment}</h2>
+                    <div class="confidence">Confidence: ${data.confidence}%</div>
+                    
+                    <div class="prob-bar">
+                        <div class="prob-fill-positive" style="width: ${data.probabilities.positive}%">
+                            Positive ${data.probabilities.positive}%
+                        </div>
+                    </div>
+                    <div class="prob-bar">
+                        <div class="prob-fill-negative" style="width: ${data.probabilities.negative}%">
+                            Negative ${data.probabilities.negative}%
+                        </div>
+                    </div>
+                    
+                    <div class="stats">
+                        <span>📝 ${data.word_count} words</span>
+                        <span>🔤 ${data.review_length} chars</span>
+                        <span>🤖 Logistic Regression</span>
+                    </div>
+                    
+                    <div style="margin-top: 1rem; font-size: 0.85rem; opacity: 0.8;">
+                        "${data.truncated_review}"
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Allow Enter key (Ctrl+Enter) to submit
+        document.getElementById('reviewInput').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                predictSentiment();
+            }
+        });
+    </script>
+</body>
+</html>
